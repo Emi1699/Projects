@@ -12,7 +12,7 @@ let HOR_CELLS = WIDTH / cellSize
 let VER_CELLS = HEIGHT / cellSize
 
 let wallColour = 170
-let curentCellColour = "yellow"
+let curentCellColour = 'yellow'
 let backgroundColour = 25
 
 const directions = {
@@ -36,29 +36,35 @@ function setup() {
   finalY = VER_CELLS;
   finalX = HOR_CELLS;
 
-  createCells();
+  createCells(); // create the array holding all the cells
 
-  assignCellsNeighbours();
-  console.log(cells[1].getNeighbors());
+  assignCellsNeighbours(); // link every cell to its neighbours
 }
 
 function draw() {
   background(backgroundColour); // 0 = black, 255 = white
 
-  stroke(wallColour);
-  strokeWeight(1.25)
+  // // draw vertical walls
+  // for (i = 0; i <= width; i+= cellSize) {
+  //   line(i, 0, i, height)
+  // }
 
-  // draw vertical walls
-  for (i = 0; i <= width; i+= cellSize) {
-    line(i, 0, i, height)
+  // // draw horizontal walls
+  // for (j = 0; j <= width; j+= cellSize) {
+  //   line(0, j, width, j)
+  // }
+
+  for (id in cells) {
+    cells[id].draw()
   }
 
-  // draw horizontal walls
-  for (j = 0; j <= width; j+= cellSize) {
-    line(0, j, width, j)
-  }
 
   showCellNumber();
+
+  cells[1936].removeWall(directions.up);
+  // cells[1936].removeWall(directions.down);
+  // cells[1936].removeWall(directions.left);
+  // cells[1936].removeWall(directions.right);
 }
 
 showCellNumber = function() {
@@ -155,6 +161,31 @@ class Cell{
   visited = false;
   x = (this.id % HOR_CELLS) * cellSize;
   y = (((this.id - x) / HOR_CELLS) + 1) * cellSize;
+  upwall = true;
+  downwall = true;
+  leftwall = true;
+  rightwall = true;
+
+  draw() {
+    stroke(wallColour);
+    strokeWeight(1)
+
+    if (this.upwall) {
+      line(this.x, this.y, this.x + cellSize, this.y)
+    }
+
+    if (this.downwall) {
+      line(this.x, this.y +cellSize, this.x + cellSize, this.y + cellSize)
+    }
+
+    if (this.leftwall) {
+      line(this.x, this.y, this.x, this.y + cellSize)
+    }
+
+    if (this.rightwall) {
+      line(this.x + cellSize, this.y, this.x + cellSize, this.y + cellSize)
+    }
+  }
 
   setNeighbours(d1, d2, d3, d4) {
     var argumentsArray = Array.prototype.slice.call(arguments);
@@ -208,12 +239,35 @@ class Cell{
     this.y = y
   }
 
-  // removeWall(direction) {
-  //   stroke(backgroundColour);
-  //   strokeWeight(1.25)
+  removeWall(direction) {
+    // noStroke();
+    stroke(backgroundColour);
+    strokeWeight(1)
 
-  //   if (direction == directions.up) {
-  //     line
-  //   }
-  // }
+    if (direction == directions.up) {
+      this.upwall = false;
+
+      if (this.up) {
+        this.up.downwall = false
+      }
+    } else if (direction == directions.down) {
+      this.downwall = false
+
+      if (this.down) {
+        this.down.upwall = false;
+      }
+    } else if (direction == directions.left) {
+      this.leftwall = false
+
+      if (this.left) {
+        this.left.rightwall = false;
+      }
+    } else {
+      this.rightwall = false
+
+      if (this.right) {
+        this.right.leftwall = false;
+      }
+    }
+  }
 }
