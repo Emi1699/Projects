@@ -2,6 +2,17 @@
 let cell_id = 3
 let cells = {}; // hold all the cells in the maze
 cellSize = 25
+wallColour = 170
+let cellStack = []
+currentCell = null;
+curentCellColour = "yellow"
+
+const directions = {
+  up: "UP",
+  down: "DOWN",
+  left: "LEFT",
+  right: "RIGHT"
+}
 
 function setup() {
   createCanvas(windowWidth - 20, 650);
@@ -17,30 +28,16 @@ function setup() {
   finalY = height / cellSize;
   finalX = width / cellSize;
 
-   // create the cells in the maze
-  for (x = 1; x<= finalX; x++) {
-    for (y = 1; y<= finalY; y++) {
-      id = x + (finalX * (y - 1))
+  createCells();
 
-      cells[id] = new Cell(id);
-      } 
-    } // second loop (y - height)
-
-    assignCellsNeighbours();
+  assignCellsNeighbours();
   console.log(cells[1].getNeighbors());
-}
-
-const directions = {
-  up: "UP",
-  down: "DOWN",
-  left: "LEFT",
-  right: "RIGHT"
 }
 
 function draw() {
   background(25); // 0 = black, 255 = white
 
-  stroke('yellow');
+  stroke(wallColour);
   strokeWeight(1.25)
 
   // draw vertical walls
@@ -53,19 +50,33 @@ function draw() {
     line(0, j, width, j)
   }
 
+  // showCellNumber();
+}
+
+showCellNumber = function() {
   for (x = 1; x<= finalX; x++) {
     for (y = 1; y<= finalY; y++) {
       id = x + (finalX * (y - 1))
 
       noStroke();
-      fill("red");
+      fill("white");
       textAlign(CENTER, CENTER);
       textSize(10);
       strokeWeight(2);
       text(id, x * cellSize - cellSize / 2, y * cellSize - cellSize / 2);
     }
   }
-  
+}
+
+createCells = function() {
+  // create the cells in the maze
+  for (x = 1; x<= finalX; x++) {
+    for (y = 1; y<= finalY; y++) {
+      id = x + (finalX * (y - 1))
+
+      cells[id] = new Cell(id);
+    } 
+  } 
 }
 
 assignCellsNeighbours = function() {
@@ -159,8 +170,6 @@ class Cell{
     } else {
       this.right = null
     }
-
-
   }
 
   getNeighbors() {
