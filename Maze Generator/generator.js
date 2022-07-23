@@ -24,6 +24,7 @@ const directions = {
 
 function setup() {
   createCanvas(WIDTH, HEIGHT);
+  frameRate(60);
 
   console.log("HORIZONTAL CELLS -> " + HOR_CELLS);
   console.log("VERTICAL CELLS -> " + VER_CELLS);
@@ -34,6 +35,9 @@ function setup() {
   createCells(); // create the array holding all the cells
 
   assignCellsNeighbours(); // link every cell to its neighbours
+
+  cells[1].visited = true; 
+  cellStack.push(cells[1]); // 1.Choose the initial cell, mark it as visited and push it to the stack
 }
 
 function draw() {
@@ -43,9 +47,31 @@ function draw() {
     cells[id].draw()
   }
 
-  showCellNumber();
+  // showCellNumber();
 
-  cells[1936].removeWall(directions.up);
+  // var item = items[Math.floor(Math.random()*items.length)];
+
+    let currentCell = cellStack.pop(); // 1. Pop a cell from the stack and make it a current cell
+
+    if (currentCell.getUnvisitedNeighbours()) { // 2. If the current cell has any neighbours which have not been visited 
+      let unvisitedNeighbours = currentCell.getUnvisitedNeighbours();
+
+      cellStack.push(currentCell) // 1. Push the current cell to the stack
+      let nextCell = unvisitedNeighbours[Math.floor(Math.random()*unvisitedNeighbours.length)]; // 2. Choose one of the unvisited neighbours || nextCell = chosenCell
+
+      if (currentCell.up == nextCell) { // 3.Remove the wall between the current cell and the chosen cell
+        currentCell.removeWall(directions.up)
+      } else if (currentCell.down == nextCell) {
+        currentCell.removeWall(directions.down)
+      } else if (currentCell.left == nextCell) {
+        currentCell.removeWall(directions.left)
+      } else {
+        currentCell.removeWall(directions.right)
+      }
+
+      nextCell.visited = true;
+      cellStack.push(nextCell);
+    }
 }
 
 showCellNumber = function() {
@@ -140,8 +166,10 @@ class Cell{
 
   neighbours = [];
   visited = false;
+
   x = (this.id % HOR_CELLS) * cellSize;
   y = (((this.id - x) / HOR_CELLS) + 1) * cellSize;
+
   upwall = true;
   downwall = true;
   leftwall = true;
@@ -218,6 +246,41 @@ class Cell{
 
   setY(y) {
     this.y = y
+  }
+
+  getUnvisitedNeighbours() {
+    let neighbours = this.getNeighbors()
+    let unvisitedNeighbours = [];
+
+    if (neighbours.includes(directions.up)) {
+      if (!this.up.visited) {
+        unvisitedNeighbours.push(this.up)
+      }
+    }
+
+    if (neighbours.includes(directions.down)) {
+      if (!this.down.visited) {
+        unvisitedNeighbours.push(this.down)
+      }
+    }
+
+    if (neighbours.includes(directions.left)) {
+      if (!this.left.visited) {
+        unvisitedNeighbours.push(this.left)
+      }
+    }
+
+    if (neighbours.includes(directions.right)) {
+      if (!this.right.visited) {
+        unvisitedNeighbours.push(this.right)
+      }
+    }
+
+    if (unvisitedNeighbours.length > 0) {
+      return unvisitedNeighbours
+    } else {
+      return false
+    }
   }
 
   removeWall(direction) {
