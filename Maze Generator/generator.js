@@ -11,9 +11,10 @@ let HEIGHT = 650
 let HOR_CELLS = WIDTH / cellSize
 let VER_CELLS = HEIGHT / cellSize
 
-let wallColour = 170
+let wallColour = 'white'
 let curentCellColour = 'yellow'
 let backgroundColour = 25
+let visitedCellColour = "magenta"
 
 const directions = {
   up: "UP",
@@ -52,12 +53,13 @@ function draw() {
   // var item = items[Math.floor(Math.random()*items.length)];
 
     let currentCell = cellStack.pop(); // 1. Pop a cell from the stack and make it a current cell
+    currentCell.current = true;
 
     if (currentCell.getUnvisitedNeighbours()) { // 2. If the current cell has any neighbours which have not been visited 
       let unvisitedNeighbours = currentCell.getUnvisitedNeighbours();
 
       cellStack.push(currentCell) // 1. Push the current cell to the stack
-      let nextCell = unvisitedNeighbours[Math.floor(Math.random()*unvisitedNeighbours.length)]; // 2. Choose one of the unvisited neighbours || nextCell = chosenCell
+      let nextCell = unvisitedNeighbours[Math.floor(Math.random()*unvisitedNeighbours.length)]; // 2. Choose one of the unvisited neighbours ->>>> nextCell = chosenCell
 
       if (currentCell.up == nextCell) { // 3.Remove the wall between the current cell and the chosen cell
         currentCell.removeWall(directions.up)
@@ -170,6 +172,8 @@ class Cell{
   x = (this.id % HOR_CELLS) * cellSize;
   y = (((this.id - x) / HOR_CELLS) + 1) * cellSize;
 
+  current = false;
+
   upwall = true;
   downwall = true;
   leftwall = true;
@@ -177,7 +181,7 @@ class Cell{
 
   draw() {
     stroke(wallColour);
-    strokeWeight(1)
+    strokeWeight(2)
 
     if (this.upwall) {
       line(this.x, this.y, this.x + cellSize, this.y)
@@ -193,6 +197,18 @@ class Cell{
 
     if (this.rightwall) {
       line(this.x + cellSize, this.y, this.x + cellSize, this.y + cellSize)
+    }
+
+    if (this.visited) {
+      fill(curentCellColour)
+      noStroke()
+      rect(this.x, this.y, cellSize)
+    }
+
+    if (this.current) {
+      fill(visitedCellColour)
+      noStroke()
+      rect(this.x, this.y, cellSize)
     }
   }
 
