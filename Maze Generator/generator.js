@@ -7,7 +7,7 @@ let currentCell = null;
 let cellSize = 25
 
 let WIDTH = 1900
-let HEIGHT = 650
+let HEIGHT = 950
 let HOR_CELLS = WIDTH / cellSize
 let VER_CELLS = HEIGHT / cellSize
 
@@ -25,7 +25,7 @@ const directions = {
 
 function setup() {
   createCanvas(WIDTH, HEIGHT);
-  frameRate(60);
+  frameRate(144);
 
   console.log("HORIZONTAL CELLS -> " + HOR_CELLS);
   console.log("VERTICAL CELLS -> " + VER_CELLS);
