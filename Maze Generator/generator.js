@@ -25,11 +25,6 @@ const directions = {
 function setup() {
   createCanvas(WIDTH, HEIGHT);
 
-  console.log("WIDTH -> " + width);
-  console.log("HEIGHT -> " + height);
-
-  console.log()
-
   console.log("HORIZONTAL CELLS -> " + HOR_CELLS);
   console.log("VERTICAL CELLS -> " + VER_CELLS);
 
@@ -44,27 +39,13 @@ function setup() {
 function draw() {
   background(backgroundColour); // 0 = black, 255 = white
 
-  // // draw vertical walls
-  // for (i = 0; i <= width; i+= cellSize) {
-  //   line(i, 0, i, height)
-  // }
-
-  // // draw horizontal walls
-  // for (j = 0; j <= width; j+= cellSize) {
-  //   line(0, j, width, j)
-  // }
-
   for (id in cells) {
     cells[id].draw()
   }
 
-
   showCellNumber();
 
   cells[1936].removeWall(directions.up);
-  // cells[1936].removeWall(directions.down);
-  // cells[1936].removeWall(directions.left);
-  // cells[1936].removeWall(directions.right);
 }
 
 showCellNumber = function() {
@@ -191,14 +172,14 @@ class Cell{
     var argumentsArray = Array.prototype.slice.call(arguments);
 
     if (argumentsArray.includes(directions.up)) {
-      this.up = cells[this.id - width]
+      this.up = cells[this.id - HOR_CELLS]
       this.neighbours.push(directions.up)
     } else {
       this.up = null
     }
 
     if(argumentsArray.includes(directions.down)) {
-      this.down = cells[this.id + width]
+      this.down = cells[this.id + HOR_CELLS]
       this.neighbours.push(directions.down)
     } else {
       this.down = null
